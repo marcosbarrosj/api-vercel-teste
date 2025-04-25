@@ -1,7 +1,7 @@
-// api/index.js
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const serverless = require('serverless-http');
 
 dotenv.config();
 
@@ -10,9 +10,7 @@ app.use(express.json());
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB conectado!'))
-  .catch(err => {
-    console.error('Erro na conexão com MongoDB:', err.message);
-  });
+  .catch(err => console.error('Erro ao conectar no MongoDB:', err.message));
 
 const Usuario = mongoose.model('Usuario', {
   nome: String,
@@ -34,5 +32,5 @@ app.post('/cadastro', async (req, res) => {
   }
 });
 
-const serverless = require('serverless-http');
-module.exports = serverless(app);
+module.exports = app;
+module.exports.handler = serverless(app); // <- Essencial para Vercel!
